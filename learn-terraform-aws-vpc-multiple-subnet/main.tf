@@ -92,9 +92,32 @@ resource "aws_route_table" "private_rt" {
 }
 
 resource "aws_route_table_association" "private_subnet_asso" {
-  count          = length(var.subnet_private_ec2_cidr)
+  count = length(var.subnet_private_ec2_cidr)
   subnet_id      = aws_subnet.subnet_private_ec2[count.index].id
   route_table_id = aws_route_table.private_rt[count.index].id
+}
+
+resource "aws_eip" "nat_eip" {
+}
+
+resource "aws_nat_gateway" "nat_gateway" {
+  allocation_id = aws_eip.nat_eip.id
+  subnet_id     = aws_subnet.subnet_private_ec2[0].id  # Just use the first private subnet for EC2 instances, assuming all private subnets use the same route table
+  tags = {
+    Name = "NAT Gateway"
+    # Add more tags as needed
+  }
+
+}
+
+resource "aws_route" "private_subnet_route" {
+  count = length(var.subnet_private_ec2_cidr)
+
+  route_table_id          = aws_route_table.private_rt[count.index].id
+  destination_cidr_block  = "0.0.0.0/0"  # Default route for NAT Gateway
+
+  # Specify the ID of the NAT Gateway in the gateway_id attribute
+  gateway_id = aws_nat_gateway.nat_gateway.id
 }
 
 #####
@@ -118,7 +141,6 @@ resource "aws_route_table" "private_rt_db" {
 }
 
 resource "aws_route_table_association" "private_subnet_db_asso" {
-  count          = length(var.subnet_private_db_cidr)
-  subnet_id      = aws_subnet.subnet_private_db[count.index].id
-  route_table_id = aws_route_table.private_rt_db[count.index].id
+  subnet_id      = aws_subnet.subnet_private_ec2[0].id  # Assuming you have only one private subnet for EC2 instances
+  route_table_id = aws_route_table.private_rt[0].id
 }
