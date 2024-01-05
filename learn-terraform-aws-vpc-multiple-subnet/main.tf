@@ -49,7 +49,7 @@ resource "aws_subnet" "subnet_public" {
 resource "aws_internet_gateway" "internet_gateway" {
   vpc_id = aws_vpc.main.id
   tags   = {
-    Name = "default igw"
+    Name = "Default IGW"
   }
 }
 
@@ -104,7 +104,7 @@ resource "aws_nat_gateway" "nat_gateway" {
   allocation_id = aws_eip.nat_eip.id
   subnet_id     = aws_subnet.subnet_private_ec2[0].id  # Just use the first private subnet for EC2 instances, assuming all private subnets use the same route table
   tags = {
-    Name = "NAT Gateway"
+    Name = "Default NAT Gateway"
     # Add more tags as needed
   }
 
@@ -118,6 +118,16 @@ resource "aws_route" "private_subnet_route" {
 
   # Specify the ID of the NAT Gateway in the gateway_id attribute
   gateway_id = aws_nat_gateway.nat_gateway.id
+}
+
+# Create tags for the default route table
+resource "aws_default_route_table" "default_rt" {
+  default_route_table_id = aws_vpc.main.default_route_table_id  # Reference the default route table associated with the VPC
+
+  tags = {
+    Name = "Default Route Table"
+    # Add more tags as needed
+  }
 }
 
 #####
