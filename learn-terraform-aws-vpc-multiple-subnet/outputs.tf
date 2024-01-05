@@ -18,6 +18,16 @@ output "id" {
   value = aws_vpc.main.id
 }
 
+output "route_table_id" {
+  description = "Route Table Main Block"
+  value = aws_vpc.main.default_route_table_id
+}
+
+# output "default_route_table_id" {
+#   description = "Route Table Main Block"
+#   value = data.aws_default_route_table.default.id
+# }
+
 output "private_subnet_ids" {
   value = aws_subnet.subnet_private_ec2[*].id
 }

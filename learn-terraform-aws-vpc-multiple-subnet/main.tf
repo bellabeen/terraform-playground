@@ -19,6 +19,13 @@ terraform {
 
 provider "aws" {
   region = "ap-southeast-1"
+    default_tags {
+      tags = {
+          "tunas:env" = "prod"
+          "tunas:application:id" = "TEDS"
+          "tunas:cost-center" = "TDM"
+    }
+  }
 }
 
 resource "aws_vpc" "main" {
