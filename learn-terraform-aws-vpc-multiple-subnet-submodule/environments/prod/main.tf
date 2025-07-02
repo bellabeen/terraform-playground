@@ -1,19 +1,15 @@
-# environments/dev/main.tf
-
-provider "aws" {
-  region = "ap-southeast-1"
-}
-
 module "vpc" {
   source = "../../modules/vpc"
+  # Specify module input variables if needed
 }
 
-module "subnet" {
-  source = "../../modules/subnet"
-}
 
-module "nat_gateway" {
-  source = "../../modules/nat_gateway"
-  # Add module-specific variables if needed
-  # Example: subnet_ids = module.subnet.subnet_ids
-}
+# module "subnet" {
+#   source = "../../modules/subnet"
+#   # Specify module input variables if needed
+# }
+
+# module "nat_gateway" {
+#   source = "../../modules/nat_gateway"
+#   # Specify module input variables if needed
+# }
